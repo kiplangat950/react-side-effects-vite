@@ -2,9 +2,28 @@ import { useState, useEffect } from 'react'
 import JokeDisplay from './components/JokeDisplay'
 import FetchButton from './components/FetchButton'
 
-function App() {
-  // Step 1: Create state variables for `joke` and `loading`
 
+function App() {
+  const [joke, setJoke] = useState('')
+  const [loading, setLoading] = useState(true)
+
+  const fetchJoke = () => {
+    setLoading(true)
+    fetch('https://v2.jokeapi.dev/joke/Programming?type=single')
+    .then((res) => res.json())
+    .then((data) => {
+      setJoke(data.joke)
+      setLoading(false)
+    })
+    .catch((error) => {
+        console.error('Error fetching joke:', error)
+        setLoading(false)
+      })
+  }
+
+  useEffect(() => {
+    fetchJoke()
+  }, [])
   // Step 2: Use `useEffect` to call a function that fetches a joke when the component mounts
 
   // Step 3: Define a function that fetches a programming joke from an API
@@ -17,10 +36,8 @@ function App() {
   return (
     <div className="app">
       <h1>Programming Jokes</h1>
-      {/* Step 4: Pass the necessary props to JokeDisplay */}
-      <JokeDisplay />
-      {/* Step 5: Pass the function to FetchButton so it can fetch a new joke on click */}
-      <FetchButton />
+      <JokeDisplay joke={joke} loading={loading} />
+      <FetchButton fetchJoke={fetchJoke} />
     </div>
   )
 }
